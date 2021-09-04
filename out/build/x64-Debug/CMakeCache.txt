@@ -18,7 +18,7 @@
 BUILD_EDITOR_COCOSTUDIO:BOOL=ON
 
 //Build editor support for spine
-BUILD_EDITOR_SPINE:BOOL=OFF
+BUILD_EDITOR_SPINE:BOOL=True
 
 //Build extension library
 BUILD_EXTENSIONS:BOOL=ON
@@ -290,6 +290,9 @@ OpenalSoft_SOURCE_DIR:STATIC=P:/source/huidesktop-native-spine38-gdi/HuiDesktopN
 
 //Path to a program.
 PYTHON_COMMAND:FILEPATH=C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python37_64/python.exe
+
+//No help, variable specified on the command line.
+USE_COCOS2DX_V4:BOOL=True
 
 //Value Computed by CMake
 box2d_BINARY_DIR:STATIC=P:/source/huidesktop-native-spine38-gdi/HuiDesktopNativeRendererSpine38Gdi/out/build/x64-Debug/engine/external/Box2D
