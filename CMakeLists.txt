@@ -78,10 +78,12 @@ elseif(WINDOWS)
     list(APPEND GAME_HEADER
          proj.win32/main.h
          proj.win32/resource.h
+         proj.win32/StartInfo.h
          )
     list(APPEND GAME_SOURCE
          proj.win32/main.cpp
          proj.win32/game.rc
+         proj.win32/StartInfo.cpp
          ${common_res_files}
          )
 elseif(APPLE)

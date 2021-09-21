@@ -30,7 +30,19 @@
       "installRoot": "${projectDir}\\out\\install\\${name}",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x64_x64" ]
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "variables": [
+        {
+          "name": "BUILD_EDITOR_SPINE",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "USE_COCOS2DX_V4",
+          "value": "True",
+          "type": "BOOL"
+        }
+      ]
     }
   ]
 }

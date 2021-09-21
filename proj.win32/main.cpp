@@ -25,6 +25,7 @@
 #include "main.h"
 #include "AppDelegate.h"
 #include "cocos2d.h"
+#include "StartInfo.h"
 
 USING_NS_CC;
 
@@ -34,7 +35,9 @@ int WINAPI _tWinMain(HINSTANCE hInstance,
                        int       nCmdShow)
 {
     UNREFERENCED_PARAMETER(hPrevInstance);
-    UNREFERENCED_PARAMETER(lpCmdLine);
+    if (__argc == 0) return 1;
+
+    StartInfo::init();
 
     // create the application instance
     AppDelegate app;
