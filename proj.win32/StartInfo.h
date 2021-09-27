@@ -11,5 +11,5 @@ public:
 	static std::string atlasFile;
 	static std::string skelFile;
 
-	static void init();
+	static void init(const char* ipcName);
 };

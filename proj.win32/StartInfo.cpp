@@ -1,24 +1,12 @@
 #include <cassert>
-#include <windows.h>
-#include <shellapi.h>
 #include "StartInfo.h"
 
 Ipc* StartInfo::ipc;
 std::string StartInfo::atlasFile;
 std::string StartInfo::skelFile;
 
-void StartInfo::init()
+void StartInfo::init(const char* ipcName)
 {
-	LPWSTR* szArglist;
-	int nArgs;
-
-	szArglist = CommandLineToArgvW(GetCommandLineW(), &nArgs);
-	assert(NULL != szArglist);
-	assert(nArgs > 1);
-
-	char ipcName[64];
-	wcstombs(ipcName, szArglist[1], 63);
-
 	ipc = openIpc(ipcName);
 
 	prepareNewMessage(ipc, 0, 0);
