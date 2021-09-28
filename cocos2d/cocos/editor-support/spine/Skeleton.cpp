@@ -463,6 +463,51 @@ void Skeleton::getBounds(float &outX, float &outY, float &outWidth, float &outHe
 	outHeight = maxY - minY;
 }
 
+unsigned int Skeleton::getBounds1(Vector<float> &outVertexBuffer, Vector<unsigned int>& outPolyBegin) {
+	unsigned int totalVertexCount = 0;
+	unsigned int totalPolygonCount = 0;
+	for (size_t i = 0; i < _drawOrder.size(); ++i) {
+		Slot *slot = _drawOrder[i];
+		if (!slot->_bone._active) continue;
+		size_t verticesLength = 0;
+		Attachment *attachment = slot->getAttachment();
+
+		if (attachment != NULL && attachment->getRTTI().instanceOf(RegionAttachment::rtti)) {
+			RegionAttachment *regionAttachment = static_cast<RegionAttachment *>(attachment);
+
+			verticesLength = 8;
+			if (outVertexBuffer.size() < totalVertexCount + 8) {
+				outVertexBuffer.setSize(totalVertexCount + 8, 0);
+			}
+
+			regionAttachment->computeWorldVertices(slot->getBone(), outVertexBuffer, totalVertexCount);
+		} else if (attachment != NULL && attachment->getRTTI().instanceOf(MeshAttachment::rtti)) {
+			MeshAttachment *mesh = static_cast<MeshAttachment *>(attachment);
+
+			verticesLength = mesh->getHullLength();
+			if (outVertexBuffer.size() < totalVertexCount + verticesLength) {
+				outVertexBuffer.setSize(totalVertexCount + verticesLength, 0);
+			}
+
+			mesh->computeWorldVertices(*slot, 0, verticesLength, outVertexBuffer, totalVertexCount);
+		}
+		
+		if (verticesLength != 0) {
+			totalPolygonCount += 1;
+			if (outPolyBegin.size() < totalPolygonCount) {
+				outPolyBegin.setSize(totalPolygonCount, 0);
+			}
+			outPolyBegin[totalPolygonCount - 1] = totalVertexCount;
+			totalVertexCount += verticesLength;
+		}
+	}
+	if (outPolyBegin.size() < totalPolygonCount + 1) {
+		outPolyBegin.setSize(totalPolygonCount + 1, 0);
+	}
+	outPolyBegin[totalPolygonCount] = totalVertexCount;
+	return totalPolygonCount;
+}
+
 Bone *Skeleton::getRootBone() {
 	return _bones.size() == 0 ? NULL : _bones[0];
 }

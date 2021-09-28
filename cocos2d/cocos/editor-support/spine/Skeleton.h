@@ -164,6 +164,8 @@ public:
 	/// @param outVertexBuffer Reference to hold a Vector of floats. This method will assign it with new floats as needed.
 	void getBounds(float &outX, float &outY, float &outWidth, float &outHeight, Vector<float> &outVertexBuffer);
 
+	unsigned int getBounds1(Vector<float> &outVertexBuffer, Vector<unsigned int> &outPolyBegin);
+
 	Bone *getRootBone();
 
 	SkeletonData *getData();
