@@ -102,7 +102,7 @@ bool HelloWorld::init()
 	//test bounding
 	dnode = DrawNode::create();
 	assert(dnode);
-	this->addChild(dnode);
+	this->addChild(dnode, 114514);
 	return true;
 }
 
@@ -120,15 +120,13 @@ void HelloWorld::update(float dt) {
 	dnode->clear();
 	for (int i = 0; i < total; ++i) {
 		std::vector<Point> ps;
+		ps.reserve((poly[i + 1] - poly[i]) / 2);
 		for (int j = poly[i], je = poly[i + 1]; j < je; j += 2) {
-			ps.push_back(Point(vec[j] + 100, vec[j + 1])); // +100
+			ps.push_back(Point(vec[j] + 200, vec[j + 1])); // +200: skeleton world position
 		}
 		if (!inPoly && Point_In_Polygon_2D(curX, curY, ps)) {
-			dnode->drawPolygon(ps.data(), ps.size(), Color4F(0, 1, 0, 0.2), 0.5, Color4F(0, 0, 1, 1));
 			inPoly = true;
-		}
-		else {
-			dnode->drawPolygon(ps.data(), ps.size(), Color4F(1, 0, 0, 0.2), 0.5, Color4F(0, 0, 1, 1));
+			break;
 		}
 	}
 	if (inPoly) {
