@@ -33,14 +33,14 @@ using namespace cocos2d::experimental;
 #endif
 
 // Layered window try
-#define LAYERED_WINDOW_TYPE 1
+#define LAYERED_WINDOW_TYPE 3
 
 #if LAYERED_WINDOW_TYPE == 1
 #include <dwmapi.h>
 #pragma comment (lib, "dwmapi.lib")
 #endif
 
-#if LAYERED_WINDOW_TYPE == 2
+#if LAYERED_WINDOW_TYPE >= 2
 #include <Windows.h>
 #endif
 // -Layered window try
@@ -144,6 +144,19 @@ bool AppDelegate::applicationDidFinishLaunching() {
 		SetWindowLong(hwnd, GWL_EXSTYLE, t);
 		SetLayeredWindowAttributes(hwnd, RGB(0, 255, 0), 0, LWA_COLORKEY);
 		director->setClearColor(Color4F(0, 1, 0, 0));
+	}
+#endif
+
+
+#if LAYERED_WINDOW_TYPE == 3
+	{
+		auto hwnd = glview->getWin32Window();
+		LONG t = GetWindowLong(hwnd, GWL_EXSTYLE);
+		t |= WS_EX_LAYERED;
+		t |= WS_EX_NOREDIRECTIONBITMAP;
+		SetWindowLong(hwnd, GWL_EXSTYLE, t);
+		SetLayeredWindowAttributes(hwnd, 0, 255, LWA_ALPHA);
+		director->setClearColor(Color4F(0, 0, 0, 0));
 	}
 #endif
 

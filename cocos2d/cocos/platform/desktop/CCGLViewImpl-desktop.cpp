@@ -302,9 +302,12 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #endif
 
+    glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
+    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+
     int neededWidth = (int)(rect.size.width * _frameZoomFactor);
     int neededHeight = (int)(rect.size.height * _frameZoomFactor);
-
+    
     _mainWindow = glfwCreateWindow(neededWidth, neededHeight, _viewName.c_str(), _monitor, nullptr);
 
     if (_mainWindow == nullptr)

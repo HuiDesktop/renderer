@@ -44,9 +44,13 @@ public:
 	// implement the "static create()" method manually
 	CREATE_FUNC(HelloWorld);
 
+	void onMouseDown(cocos2d::Event* event);
+	void onMouseUp(cocos2d::Event* event);
+
 private:
 	spine::SkeletonAnimation* skeletonAnimation;
 	cocos2d::DrawNode* dnode;
+	cocos2d::EventListenerMouse* mouseEventListener;
 };
 
 #endif // __HELLOWORLD_SCENE_H__

@@ -83,8 +83,14 @@ bool HelloWorld::init()
 	/////////////////////////////
 	// 3. add your codes below...
 
-	// add a label shows "Hello World"
-	// create and initialize a label
+	MouseTracker::setWindow(Director::getInstance()->getOpenGLView()->getWin32Window());
+
+	// events
+	scheduleUpdate();
+	mouseEventListener = EventListenerMouse::create();
+	mouseEventListener->onMouseDown = CC_CALLBACK_1(HelloWorld::onMouseDown, this);
+	mouseEventListener->onMouseUp = CC_CALLBACK_1(HelloWorld::onMouseUp, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(mouseEventListener, this);
 
 	// test spine sprite
 	auto textureLoader = new Cocos2dTextureLoader();
@@ -97,7 +103,6 @@ bool HelloWorld::init()
 	skeletonAnimation->setAnimation(0, "Relax", true);
 	skeletonAnimation->setPosition(200, 0);
 	this->addChild(skeletonAnimation, 1);
-	scheduleUpdate();
 
 	//test bounding
 	dnode = DrawNode::create();
@@ -111,10 +116,8 @@ void HelloWorld::update(float dt) {
 	spine::Vector<float> vec;
 	spine::Vector<unsigned int> poly;
 	int total = skeletonAnimation->getSkeleton()->getBounds1(vec, poly);
-
-	MouseTracker::updateWindowPos(Director::getInstance()->getOpenGLView()->getWin32Window());
 	int curX = MouseTracker::mouseX - MouseTracker::winX;
-	int curY = 352 - (MouseTracker::mouseY - MouseTracker::winY);// 352 is my windows's height, very brute
+	int curY = 320 - (MouseTracker::mouseY - MouseTracker::winY);// 320 is my windows's height, very brute
 	bool inPoly = false;
 
 	dnode->clear();
@@ -135,6 +138,7 @@ void HelloWorld::update(float dt) {
 	else {
 		dnode->drawDot(Vec2(curX, curY), 5, Color4F(1, 0, 0, 1));
 	}
+	MouseTracker::state = inPoly;
 }
 
 
@@ -149,4 +153,14 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 	//_eventDispatcher->dispatchEvent(&customEndEvent);
 
 
+}
+
+void HelloWorld::onMouseDown(cocos2d::Event* event)
+{
+	MouseTracker::beginDrag();
+}
+
+void HelloWorld::onMouseUp(cocos2d::Event* event)
+{
+	MouseTracker::endDrag();
 }
