@@ -58,10 +58,12 @@ endif()
 list(APPEND GAME_SOURCE
      Classes/AppDelegate.cpp
      Classes/HelloWorldScene.cpp
+     Classes/PointInPolygon.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
      Classes/HelloWorldScene.h
+     Classes/PointInPolygon.h
      )
 
 if(ANDROID)
@@ -76,11 +78,13 @@ elseif(LINUX)
          )
 elseif(WINDOWS)
     list(APPEND GAME_HEADER
+         "Classes/WinMouseTracker.h"
          proj.win32/main.h
          proj.win32/resource.h
          proj.win32/StartInfo.h
          )
     list(APPEND GAME_SOURCE
+         "Classes/WinMouseTracker.cpp"
          proj.win32/main.cpp
          proj.win32/game.rc
          proj.win32/StartInfo.cpp

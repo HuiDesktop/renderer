@@ -24,6 +24,7 @@
 
 #include "main.h"
 #include "AppDelegate.h"
+#include "WinMouseTracker.h"
 #include "cocos2d.h"
 #include "StartInfo.h"
 #include <shellapi.h>
@@ -74,6 +75,8 @@ int WINAPI _tWinMain(HINSTANCE hInstance,
 	}
 
 	LocalFree(szArglist);
+
+	MouseTracker::init(hInstance);
 
 	StartInfo::init(ipcName);
 

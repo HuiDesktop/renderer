@@ -23,6 +23,8 @@
  ****************************************************************************/
 
 #include "HelloWorldScene.h"
+#include "WinMouseTracker.h"
+#include "PointInPolygon.h"
 #include <spine/spine.h>
 #include <spine/spine-cocos2dx.h>
 #include "../proj.win32/StartInfo.h"
@@ -95,7 +97,6 @@ bool HelloWorld::init()
 	skeletonAnimation->setAnimation(0, "Relax", true);
 	skeletonAnimation->setPosition(200, 0);
 	this->addChild(skeletonAnimation, 1);
-	skeletonAnimation->setDebugBoundingRectEnabled(true);
 	scheduleUpdate();
 
 	//test bounding
@@ -110,13 +111,31 @@ void HelloWorld::update(float dt) {
 	spine::Vector<float> vec;
 	spine::Vector<unsigned int> poly;
 	int total = skeletonAnimation->getSkeleton()->getBounds1(vec, poly);
+
+	MouseTracker::updateWindowPos(Director::getInstance()->getOpenGLView()->getWin32Window());
+	int curX = MouseTracker::mouseX - MouseTracker::winX;
+	int curY = 352 - (MouseTracker::mouseY - MouseTracker::winY);// 352 is my windows's height, very brute
+	bool inPoly = false;
+
 	dnode->clear();
 	for (int i = 0; i < total; ++i) {
 		std::vector<Point> ps;
 		for (int j = poly[i], je = poly[i + 1]; j < je; j += 2) {
-			ps.push_back(Point(vec[j] + 100, vec[j + 1]));
+			ps.push_back(Point(vec[j] + 100, vec[j + 1])); // +100
 		}
-		dnode->drawPolygon(ps.data(), ps.size(), Color4F(1, 0, 0, 0.2), 0.5, Color4F(0, 0, 1, 1));
+		if (!inPoly && Point_In_Polygon_2D(curX, curY, ps)) {
+			dnode->drawPolygon(ps.data(), ps.size(), Color4F(0, 1, 0, 0.2), 0.5, Color4F(0, 0, 1, 1));
+			inPoly = true;
+		}
+		else {
+			dnode->drawPolygon(ps.data(), ps.size(), Color4F(1, 0, 0, 0.2), 0.5, Color4F(0, 0, 1, 1));
+		}
+	}
+	if (inPoly) {
+		dnode->drawDot(Vec2(curX, curY), 1, Color4F(0, 1, 0, 1));
+	}
+	else {
+		dnode->drawDot(Vec2(curX, curY), 5, Color4F(1, 0, 0, 1));
 	}
 }
 
