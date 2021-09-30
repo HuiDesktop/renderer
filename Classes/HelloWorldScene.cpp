@@ -84,6 +84,7 @@ bool HelloWorld::init()
 	// 3. add your codes below...
 
 	MouseTracker::setWindow(Director::getInstance()->getOpenGLView()->getWin32Window());
+	MouseTracker::setWindowPos(StartInfo::x, StartInfo::y);
 
 	// events
 	scheduleUpdate();
@@ -101,7 +102,7 @@ bool HelloWorld::init()
 	auto skeletonData = skel.readSkeletonDataFile(StartInfo::skelFile.c_str());
 	skeletonAnimation = SkeletonAnimation::createWithData(skeletonData);
 	skeletonAnimation->setAnimation(0, "Relax", true);
-	skeletonAnimation->setPosition(200, 0);
+	skeletonAnimation->setPosition(StartInfo::x0 * 0.5, StartInfo::y0 * 0.5);
 	this->addChild(skeletonAnimation, 1);
 
 	//test bounding
@@ -117,7 +118,7 @@ void HelloWorld::update(float dt) {
 	spine::Vector<unsigned int> poly;
 	int total = skeletonAnimation->getSkeleton()->getBounds1(vec, poly);
 	int curX = MouseTracker::mouseX - MouseTracker::winX;
-	int curY = 320 - (MouseTracker::mouseY - MouseTracker::winY);// 320 is my windows's height, very brute
+	int curY = StartInfo::h - (MouseTracker::mouseY - MouseTracker::winY);
 	bool inPoly = false;
 
 	dnode->clear();
@@ -125,7 +126,7 @@ void HelloWorld::update(float dt) {
 		std::vector<Point> ps;
 		ps.reserve((poly[i + 1] - poly[i]) / 2);
 		for (int j = poly[i], je = poly[i + 1]; j < je; j += 2) {
-			ps.push_back(Point(vec[j] + 200, vec[j + 1])); // +200: skeleton world position
+			ps.push_back(Point(vec[j] + skeletonAnimation->getPositionX(), vec[j + 1] + skeletonAnimation->getPositionY()));
 		}
 		if (!inPoly && Point_In_Polygon_2D(curX, curY, ps)) {
 			inPoly = true;
@@ -157,10 +158,18 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 
 void HelloWorld::onMouseDown(cocos2d::Event* event)
 {
+	prepareNewMessage(StartInfo::ipc, 2, 0);
+	finishNewMessage(StartInfo::ipc);
+	setForSend(StartInfo::ipc);
 	MouseTracker::beginDrag();
 }
 
 void HelloWorld::onMouseUp(cocos2d::Event* event)
 {
 	MouseTracker::endDrag();
+	int* pos = (int*)prepareNewMessage(StartInfo::ipc, 3, 8);
+	pos[0] = MouseTracker::winX;
+	pos[1] = MouseTracker::winY;
+	finishNewMessage(StartInfo::ipc);
+	setForSend(StartInfo::ipc);
 }

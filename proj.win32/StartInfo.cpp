@@ -2,6 +2,9 @@
 #include "StartInfo.h"
 
 Ipc* StartInfo::ipc;
+
+int StartInfo::json, StartInfo::w, StartInfo::h, StartInfo::x0, StartInfo::y0, StartInfo::x, StartInfo::y;
+
 std::string StartInfo::atlasFile;
 std::string StartInfo::skelFile;
 
@@ -16,7 +19,16 @@ void StartInfo::init(const char* ipcName)
 	waitForRead(ipc, 0);
 	auto message = peekMessage(ipc);
 	assert(messageType(message) == 0);
-	// nothing to do in test stage
+	{
+		int* initmsg = (int*)message->msg;
+		json = initmsg[0];
+		w = initmsg[1];
+		h = initmsg[2];
+		x0 = initmsg[3];
+		y0 = initmsg[4];
+		x = initmsg[5];
+		y = initmsg[6];
+	}
 	finishReadMessage(ipc);
 
 	message = peekMessage(ipc);
