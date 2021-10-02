@@ -1,37 +1,64 @@
-root = 'C:/Users/z1223/Desktop/1/verbo/'
-model = 'build_char_437_mizuki'
-w = 402
-h = 506
-x0 = 215
-y0 = 106
-x = 372
-y = 840
+root = hdt.basedir()
+package.path = root .. '\\Scripts\\?.lua'
+json = require('json')
+
+read_model_config_file = io.open(root .. '\\Scripts\\model.json', 'r')
+model_config = json.decode(read_model_config_file:read())
+read_model_config_file:close()
+
+config_path = root .. '\\Scripts\\config.json'
+read_config_file = io.open(config_path, 'r')
+config = json.decode(read_config_file:read())
+read_config_file:close()
+x = config.x
+y = config.y
+scale = config.scale
 
 ipc = require("hdtipc")
+hdt = require("hdt")
 
-function init(w, h, x0, y0, x, y, atlas, skel)
-	ipc.prepare(0, 4 * 7)
+function init(w1, h1, x0, y0, x, y, scale, atlas, skel)
+	w = math.ceil(scale * w1)
+	h = math.ceil(scale * h1)
+	x0 = x0 * scale
+	y0 = h - (h1 - y0) * scale
+
+	ipc.prepare(0, 4 * 8)
+	
 	ipc.writei32(0) -- use .skel file
+	
 	ipc.writei32(w)
 	ipc.writei32(h)
-	ipc.writei32(x0)
-	ipc.writei32(y0)
+	ipc.writefloat(x0)
+	ipc.writefloat(y0)
+	
 	ipc.writei32(x)
 	ipc.writei32(y)
+	ipc.writefloat(scale)
+	
 	ipc.send()
 	
-	ipc.prepare(1, 100)
+	ipc.prepare(1, atlas:len() + 10)
 	ipc.writestr(atlas)
 	ipc.send()
 	
-	ipc.prepare(2, 100)
+	ipc.prepare(2, skel:len() + 10)
 	ipc.writestr(skel)
 	ipc.send()
 end
 
+function writeconfig(x, y)
+	config.x = x
+	config.y = y
+	local f
+	f = io.open(config_path, 'w')
+	f:write(json.encode(config))
+	f:close()
+end
+
 receivedTable = {
 	[0] = function()
-		init(math.ceil(w * 0.5), math.ceil(h * 0.5), x0, y0, x, y, root .. model .. '.atlas', root .. model .. '.skel')
+		init(model_config.w, model_config.h, model_config.x0, model_config.y0, x, y, scale, root .. '\\' .. model_config.model .. '.atlas', root .. '\\' .. model_config.model .. '.skel')
 	end,
 	[2] = function()
 		print('Drag start.')
@@ -44,6 +71,7 @@ receivedTable = {
 		stx, x = ipc.readi32()
 		sty, y = ipc.readi32()
 		print('Drag end. x = ', x, ', y = ', y)
+		writeconfig(x, y)
 	end
 }
 

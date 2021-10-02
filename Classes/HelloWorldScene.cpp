@@ -95,14 +95,14 @@ bool HelloWorld::init()
 
 	// test spine sprite
 	auto textureLoader = new Cocos2dTextureLoader();
-	auto _atlas = new Atlas(StartInfo::atlasFile.c_str(), textureLoader, true);
+	auto _atlas = new Atlas(StartInfo::atlasFile.c_str(), textureLoader, true); // TODO: Null check
 	auto _attachmentLoader = new Cocos2dAtlasAttachmentLoader(_atlas);
 	SkeletonBinary skel(_attachmentLoader);
-	skel.setScale(0.5);
+	skel.setScale(StartInfo::scale);
 	auto skeletonData = skel.readSkeletonDataFile(StartInfo::skelFile.c_str());
 	skeletonAnimation = SkeletonAnimation::createWithData(skeletonData);
 	skeletonAnimation->setAnimation(0, "Relax", true);
-	skeletonAnimation->setPosition(StartInfo::x0 * 0.5, StartInfo::y0 * 0.5);
+	skeletonAnimation->setPosition(StartInfo::x0, StartInfo::y0);
 	this->addChild(skeletonAnimation, 1);
 
 	//test bounding
